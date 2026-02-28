@@ -34,8 +34,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "ctrl+c":
 			return m, tea.Quit
 		case "enter":
+			processID, err := strconv.ParseInt(m.table.SelectedRow()[1], 10, 32)
+			if err != nil {
+				return m, tea.Printf("failed to parse the processID: %v", err)
+			}
+			if err := KillProcess(int32(processID)); err != nil {
+				return m, tea.Printf("failed to kill the process: %v", err)
+			}
 			return m, tea.Batch(
-				tea.Printf("Let's kill process: %s!", m.table.SelectedRow()[1]),
+				tea.Printf("killed process: %d!", processID),
 			)
 		}
 	}
@@ -48,6 +55,7 @@ func (m model) View() tea.View {
 }
 
 func main() {
+	KillProcess(86420)
 	columns := []table.Column{
 		{Title: "PORT", Width: 10},
 		{Title: "PID", Width: 10},
@@ -65,8 +73,8 @@ func main() {
 
 	for _, p := range processes {
 		row := table.Row{
-			strconv.FormatUint(uint64(p.Port), 8),
-			strconv.FormatInt(int64(p.ProcessID), 15),
+			strconv.FormatUint(uint64(p.Port), 10),
+			strconv.FormatInt(int64(p.ProcessID), 10),
 			p.ProcessName,
 			p.Username,
 		}

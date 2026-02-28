@@ -47,13 +47,6 @@ func ListProcesses() ([]Process, error) {
 				return []Process{}, err
 			}
 
-			// fmt.Printf("Port: %d | PID: %d | Process: %s | User: %s\n",
-			// 	conn.Laddr.Port,
-			// 	conn.Pid,
-			// 	processName,
-			// 	username,
-			// )
-
 			process := Process{
 				Port:        conn.Laddr.Port,
 				ProcessID:   conn.Pid,
@@ -67,20 +60,19 @@ func ListProcesses() ([]Process, error) {
 	return processes, nil
 }
 
-func KillProcess(processID int32) (bool, error) {
+func KillProcess(processID int32) error {
 	processes, err := process.Processes()
 	if err != nil {
-		return false, err
+		return err
 	}
 	for _, p := range processes {
 		id := p.Pid
 		if id == processID {
-			fmt.Printf("killing process with pID: %v\b", processID)
 			if err := p.Kill(); err != nil {
-				return true, err
+				return err
 			}
+			return nil
 		}
 	}
-	fmt.Printf("process not found\n")
-	return false, fmt.Errorf("process not found\n")
+	return fmt.Errorf("process not found\n")
 }
