@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 
 	"charm.land/bubbles/v2/table"
@@ -15,15 +14,48 @@ var baseStyle = lipgloss.NewStyle().
 	BorderForeground(lipgloss.Color("240"))
 
 type model struct {
-	table table.Model
+	table     table.Model
+	processes []Process
 }
 
-func (m model) Init() tea.Cmd { return nil }
+type processKilledMsg struct {
+	pid int32
+	err error
+}
+
+func fetchProcesses() tea.Cmd {
+	return func() tea.Msg {
+		processes, err := ListProcesses()
+		if err != nil {
+			return err
+		}
+		return processes
+	}
+}
+
+func killAndRefresh(pid int32) tea.Cmd {
+	return func() tea.Msg {
+		if err := KillProcess(pid); err != nil {
+			return processKilledMsg{pid: pid, err: err}
+		}
+
+		processes, err := ListProcesses()
+		if err != nil {
+			return processKilledMsg{pid: pid, err: err}
+		}
+		return processes
+	}
+}
+
+func (m model) Init() tea.Cmd {
+	return fetchProcesses()
+}
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
+
 	switch msg := msg.(type) {
-	case tea.KeyPressMsg:
+	case tea.KeyMsg:
 		switch msg.String() {
 		case "esc":
 			if m.table.Focused() {
@@ -38,14 +70,30 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if err != nil {
 				return m, tea.Printf("failed to parse the processID: %v", err)
 			}
-			if err := KillProcess(int32(processID)); err != nil {
-				return m, tea.Printf("failed to kill the process: %v", err)
-			}
-			return m, tea.Batch(
-				tea.Printf("killed process: %d!", processID),
-			)
+			return m, killAndRefresh(int32(processID))
 		}
+
+	case []Process:
+		processes := msg
+		m.processes = processes
+		rows := make([]table.Row, len(processes))
+		for i, p := range processes {
+			rows[i] = table.Row{
+				strconv.FormatUint(uint64(p.Port), 10),
+				strconv.FormatInt(int64(p.ProcessID), 10),
+				p.ProcessName,
+				p.Username,
+			}
+		}
+		m.table.SetRows(rows)
+
+	case processKilledMsg:
+		if msg.err != nil {
+			return m, tea.Printf("failed to kill process: %v", msg.err)
+		}
+		return m, tea.Printf("killed process: %d", msg.pid)
 	}
+
 	m.table, cmd = m.table.Update(msg)
 	return m, cmd
 }
@@ -55,36 +103,16 @@ func (m model) View() tea.View {
 }
 
 func main() {
-	KillProcess(86420)
 	columns := []table.Column{
 		{Title: "PORT", Width: 10},
 		{Title: "PID", Width: 10},
 		{Title: "PROCESS NAME", Width: 15},
 		{Title: "USERNAME", Width: 10},
 	}
-	rows := []table.Row{}
-
-	processes, err := ListProcesses()
-	if err != nil {
-		// TODO: handle the error message
-		fmt.Printf("Error: %v", err)
-		os.Exit(0)
-	}
-
-	for _, p := range processes {
-		row := table.Row{
-			strconv.FormatUint(uint64(p.Port), 10),
-			strconv.FormatInt(int64(p.ProcessID), 10),
-			p.ProcessName,
-			p.Username,
-		}
-
-		rows = append(rows, row)
-	}
 
 	t := table.New(
 		table.WithColumns(columns),
-		table.WithRows(rows),
+		table.WithRows([]table.Row{}),
 		table.WithFocused(true),
 		table.WithHeight(7),
 		table.WithWidth(50),
@@ -102,9 +130,8 @@ func main() {
 		Bold(false)
 	t.SetStyles(s)
 
-	m := model{t}
+	m := model{table: t}
 	if _, err := tea.NewProgram(m).Run(); err != nil {
 		fmt.Println("Error running program:", err)
-		os.Exit(1)
 	}
 }
