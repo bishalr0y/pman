@@ -35,15 +35,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "esc":
-			if m.table.Focused() {
-				m.table.Blur()
-			} else {
-				m.table.Focus()
-			}
 		case "q", "ctrl+c":
+			// quit
 			return m, tea.Quit
+		case "r":
+			// refresh (refetch the processes)
+			return m, fetchProcesses()
 		case "enter":
+			// kill the process
 			processID, err := strconv.ParseInt(m.table.SelectedRow()[1], 10, 32)
 			if err != nil {
 				return m, tea.Printf("failed to parse the processID: %v", err)
