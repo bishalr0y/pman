@@ -27,13 +27,14 @@ func main() {
 
 	s := table.DefaultStyles()
 	s.Header = s.Header.
-		BorderStyle(lipgloss.NormalBorder()).
+		BorderStyle(lipgloss.DoubleBorder()).
 		BorderForeground(lipgloss.Color("240")).
+		Foreground(lipgloss.Color("#7287fd")).
 		BorderBottom(true).
-		Bold(false)
+		Bold(true)
 	s.Selected = s.Selected.
 		Foreground(lipgloss.Color("229")).
-		Background(lipgloss.Color("57")).
+		Background(lipgloss.Color("#7287fd")).
 		Bold(false)
 	t.SetStyles(s)
 

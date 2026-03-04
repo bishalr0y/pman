@@ -11,6 +11,15 @@ import (
 	"github.com/bishalr0y/pman/internal/process"
 )
 
+var bannerStyle = lipgloss.NewStyle().
+	Foreground(lipgloss.Color("#7287fd")).
+	Bold(true)
+
+var banner = "   ___  __ _  ___ ____ \n" +
+	"  / _ \\/  ' \\/ _ `/ _ \\\n" +
+	" / .__/_/_/_/\\_,_/_//_/\n" +
+	"/_/                    \n"
+
 var baseStyle = lipgloss.NewStyle().
 	BorderStyle(lipgloss.NormalBorder()).
 	BorderForeground(lipgloss.Color("240"))
@@ -31,24 +40,23 @@ func (k keyMap) ShortHelp() []key.Binding {
 // FullHelp returns keybindings for the expaned help view
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.Up, k.Down},      // first column
-		{k.Kill, k.Refresh}, // second column
-		{k.Quit},            // third column
+		{k.Up, k.Down, k.Kill}, // first column
+		{k.Refresh, k.Quit},    // second column
 	}
 }
 
 var keys = keyMap{
 	Up: key.NewBinding(
 		key.WithKeys("up", "k"),
-		key.WithHelp("↑/k", "move up"),
+		key.WithHelp("↑/k", "up"),
 	),
 	Down: key.NewBinding(
 		key.WithKeys("down", "j"),
-		key.WithHelp("↓/j", "move down"),
+		key.WithHelp("↓/j", "down"),
 	),
 	Kill: key.NewBinding(
 		key.WithKeys("enter"),
-		key.WithHelp("enter", "kill process"),
+		key.WithHelp("enter", "kill"),
 	),
 	Refresh: key.NewBinding(
 		key.WithKeys("r"),
@@ -68,11 +76,24 @@ type model struct {
 }
 
 func NewModel(table table.Model, processes []process.Process) *model {
+	h := help.New()
+
+	h.Styles.ShortKey = lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#a6e3a1")).
+		Bold(true)
+
+	h.Styles.ShortDesc = lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#babbf1")).
+		Italic(true)
+
+	h.Styles.ShortSeparator = lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#209fb5"))
+
 	return &model{
 		table:     table,
 		processes: processes,
 		keys:      keys,
-		help:      help.New(),
+		help:      h,
 	}
 }
 
@@ -127,8 +148,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() tea.View {
-	helpView := m.help.View(m.keys)
-	// return tea.NewView(baseStyle.Render(m.table.View()) + "\n  " + m.table.HelpView() + "\n")
+	header := bannerStyle.Render(banner)
 
-	return tea.NewView(baseStyle.Render(m.table.View()) + "\n  " + helpView + "\n")
+	tableView := baseStyle.Render(m.table.View())
+
+	helpView := "  " + m.help.View(m.keys) + "\n"
+
+	content := lipgloss.JoinVertical(
+		lipgloss.Left,
+		header,
+		tableView,
+		helpView,
+	)
+
+	return tea.NewView(content)
 }
