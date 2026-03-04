@@ -47,8 +47,8 @@ var keys = keyMap{
 		key.WithHelp("↓/j", "move down"),
 	),
 	Kill: key.NewBinding(
-		key.WithKeys("k"),
-		key.WithHelp("k", "kill process"),
+		key.WithKeys("enter"),
+		key.WithHelp("enter", "kill process"),
 	),
 	Refresh: key.NewBinding(
 		key.WithKeys("r"),
