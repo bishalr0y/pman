@@ -13,17 +13,17 @@ import (
 )
 
 var bannerStyle = lipgloss.NewStyle().
-	Foreground(lipgloss.Color("#7287fd")).
+	Foreground(lipgloss.Color(ColorTeal)).
 	Bold(true)
+
+var baseStyle = lipgloss.NewStyle().
+	BorderStyle(lipgloss.NormalBorder()).
+	BorderForeground(lipgloss.Color("240"))
 
 var banner = "   ___  __ _  ___ ____ \n" +
 	"  / _ \\/  ' \\/ _ `/ _ \\\n" +
 	" / .__/_/_/_/\\_,_/_//_/\n" +
 	"/_/                      "
-
-var baseStyle = lipgloss.NewStyle().
-	BorderStyle(lipgloss.NormalBorder()).
-	BorderForeground(lipgloss.Color("240"))
 
 type keyMap struct {
 	Up      key.Binding
@@ -80,15 +80,15 @@ func NewModel(table table.Model, processes []process.Process) *model {
 	h := help.New()
 
 	h.Styles.ShortKey = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#a6e3a1")).
+		Foreground(lipgloss.Color(ColorGreen)).
 		Bold(true)
 
 	h.Styles.ShortDesc = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#babbf1")).
+		Foreground(lipgloss.Color(ColorMauve)).
 		Italic(true)
 
 	h.Styles.ShortSeparator = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#209fb5"))
+		Foreground(lipgloss.Color(ColorTeal))
 
 	return &model{
 		table:     table,

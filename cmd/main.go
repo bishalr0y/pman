@@ -29,12 +29,12 @@ func main() {
 	s.Header = s.Header.
 		BorderStyle(lipgloss.DoubleBorder()).
 		BorderForeground(lipgloss.Color("240")).
-		Foreground(lipgloss.Color("#7287fd")).
+		Foreground(lipgloss.Color(tui.ColorLavender)).
 		BorderBottom(true).
 		Bold(true)
 	s.Selected = s.Selected.
 		Foreground(lipgloss.Color("229")).
-		Background(lipgloss.Color("#7287fd")).
+		Background(lipgloss.Color(tui.ColorLavender)).
 		Bold(false)
 	t.SetStyles(s)
 
