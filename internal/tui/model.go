@@ -2,6 +2,7 @@ package tui
 
 import (
 	"strconv"
+	"time"
 
 	"charm.land/bubbles/v2/help"
 	"charm.land/bubbles/v2/key"
@@ -18,7 +19,7 @@ var bannerStyle = lipgloss.NewStyle().
 var banner = "   ___  __ _  ___ ____ \n" +
 	"  / _ \\/  ' \\/ _ `/ _ \\\n" +
 	" / .__/_/_/_/\\_,_/_//_/\n" +
-	"/_/                    \n"
+	"/_/                      "
 
 var baseStyle = lipgloss.NewStyle().
 	BorderStyle(lipgloss.NormalBorder()).
@@ -98,7 +99,13 @@ func NewModel(table table.Model, processes []process.Process) *model {
 }
 
 func (m model) Init() tea.Cmd {
-	return fetchProcesses()
+	return tea.Batch(fetchProcesses(), autorefresh())
+}
+
+func autorefresh() tea.Cmd {
+	return tea.Tick(2*time.Second, func(t time.Time) tea.Msg {
+		return t
+	})
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -135,6 +142,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 		m.table.SetRows(rows)
+
+	case time.Time:
+		return m, tea.Batch(fetchProcesses(), autorefresh())
 
 	case processKilledMsg:
 		if msg.err != nil {
