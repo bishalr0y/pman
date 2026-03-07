@@ -1,3 +1,8 @@
+version: 2
+
+builds:
+  - dir: cmd
+
 brews:
   - name: pman
     homepage: "https://github.com/bishalr0y/pman"
