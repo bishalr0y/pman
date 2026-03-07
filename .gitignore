@@ -57,3 +57,5 @@ dist-ssr
 # Personal
 research.md
 todo.md
+# Added by goreleaser init:
+dist/

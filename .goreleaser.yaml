@@ -1,0 +1,11 @@
+brews:
+  - name: pman
+    homepage: "https://github.com/bishalr0y/pman"
+    description: "Terminal process manager"
+    license: "MIT"
+
+    repository:
+      owner: bishalr0y
+      name: homebrew-bishalr0y
+
+    directory: Formula
