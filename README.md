@@ -15,7 +15,13 @@ A terminal-based process manager with a beautiful TUI for viewing and managing l
 
 ## Installation
 
-### Using go install (Recommended)
+### Using Homebrew (Recommended on macOS)
+
+```bash
+brew install bishalr0y/homebrew-bishalr0y/pman
+```
+
+### Using go install
 
 ```bash
 go install github.com/bishalr0y/pman@latest
