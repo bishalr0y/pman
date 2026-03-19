@@ -61,7 +61,7 @@ func ListProcesses() ([]Process, error) {
 	return processes, nil
 }
 
-func KillProcess(processID int32) error {
+func KillProcessWithPID(processID int32) error {
 	processes, err := process.Processes()
 	if err != nil {
 		return err
@@ -70,6 +70,23 @@ func KillProcess(processID int32) error {
 		id := p.Pid
 		if id == processID {
 			if err := p.Kill(); err != nil {
+				return err
+			}
+			return nil
+		}
+	}
+	return fmt.Errorf("process not found\n")
+}
+
+func KillProcessWithPort(port int32) error {
+	processes, err := ListProcesses()
+	if err != nil {
+		return err
+	}
+	for _, process := range processes {
+		p := process.Port
+		if port == int32(p) {
+			if err := KillProcessWithPID(process.ProcessID); err != nil {
 				return err
 			}
 			return nil

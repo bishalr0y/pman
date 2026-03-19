@@ -2,11 +2,12 @@ package process
 
 import (
 	"os/exec"
+	"strconv"
 	"testing"
 	"time"
 )
 
-func TestListAndKillProcess(t *testing.T) {
+func TestListAndKillProcessWithPID(t *testing.T) {
 	// start a dummy process
 	cmd := exec.Command("nc", "-l", "8765")
 	if err := cmd.Start(); err != nil {
@@ -36,8 +37,46 @@ func TestListAndKillProcess(t *testing.T) {
 	}
 
 	// kill the dummy process
-	if err := KillProcess(foundPID); err != nil {
+	if err := KillProcessWithPID(foundPID); err != nil {
 		t.Fatalf("KillProcess failed: %v", err)
+	}
+
+	if err := cmd.Wait(); err == nil {
+		t.Error("process should have been terminated")
+	}
+}
+
+func TestListAndKillProcessWithPort(t *testing.T) {
+	const testPort = 8767
+	// start a dummy process
+	cmd := exec.Command("nc", "-l", strconv.Itoa(testPort))
+	if err := cmd.Start(); err != nil {
+		t.Fatalf("failed to start process: %v", err)
+	}
+	defer cmd.Process.Kill()
+
+	time.Sleep(100 * time.Millisecond)
+
+	procs, err := ListProcesses()
+	if err != nil {
+		t.Fatalf("ListProcesses failed: %v", err)
+	}
+
+	// search for the process by port
+	found := false
+	for _, p := range procs {
+		if int32(p.Port) == testPort {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Fatalf("process with port %d not found", testPort)
+	}
+
+	// kill the dummy process by port
+	if err := KillProcessWithPort(testPort); err != nil {
+		t.Fatalf("KillProcessWithPort failed: %v", err)
 	}
 
 	if err := cmd.Wait(); err == nil {

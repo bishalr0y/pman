@@ -41,6 +41,8 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
+	// remove the completion command
+	rootCmd.CompletionOptions.DisableDefaultCmd = true
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pman.yaml)")
 
 	// Cobra also supports local flags, which will only run
