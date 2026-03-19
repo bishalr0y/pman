@@ -18,7 +18,7 @@ func ListProcesses() ([]Process, error) {
 	var processes []Process
 	connections, err := gnet.Connections("inet")
 	if err != nil {
-		panic(err)
+		return processes, err
 	}
 
 	seen := make(map[int32]bool) // avoid duplicate PID lookups
