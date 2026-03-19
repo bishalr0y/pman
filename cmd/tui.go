@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"github.com/bishalr0y/pman/internal/tui"
 )
 
-func main() {
+func tui_init() {
 	columns := []table.Column{
 		{Title: "PORT", Width: 10},
 		{Title: "PID", Width: 10},

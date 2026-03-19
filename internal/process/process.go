@@ -7,11 +7,12 @@ import (
 	"github.com/shirou/gopsutil/v3/process"
 )
 
+// TODO: add more fields (status, memory, start time, protocol)
 type Process struct {
-	Port        uint32
-	ProcessID   int32
-	ProcessName string
-	Username    string
+	Port        uint32 `json:"port"`
+	ProcessID   int32  `json:"pid"`
+	ProcessName string `json:"name"`
+	Username    string `json:"username"`
 }
 
 func ListProcesses() ([]Process, error) {
