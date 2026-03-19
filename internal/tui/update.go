@@ -22,7 +22,7 @@ func fetchProcesses() tea.Cmd {
 
 func killAndRefresh(pid int32) tea.Cmd {
 	return func() tea.Msg {
-		if err := process.KillProcess(pid); err != nil {
+		if err := process.KillProcessWithPID(pid); err != nil {
 			return processKilledMsg{pid: pid, err: err}
 		}
 

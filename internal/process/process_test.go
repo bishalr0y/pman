@@ -36,7 +36,7 @@ func TestListAndKillProcess(t *testing.T) {
 	}
 
 	// kill the dummy process
-	if err := KillProcess(foundPID); err != nil {
+	if err := KillProcessWithPID(foundPID); err != nil {
 		t.Fatalf("KillProcess failed: %v", err)
 	}
 
