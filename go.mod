@@ -1,6 +1,6 @@
 module github.com/bishalr0y/pman
 
-go 1.26.0
+go 1.26.1
 
 require github.com/shirou/gopsutil/v3 v3.24.5
 
