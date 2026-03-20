@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/bishalr0y/pman/compare/v0.2.0...v0.3.0) (2026-03-20)
+
+
+### Features
+
+* add version display to TUI header ([1233435](https://github.com/bishalr0y/pman/commit/123343528c8fb56677c2935514a4ed4883cc26d7))
+
 ## [0.2.0](https://github.com/bishalr0y/pman/compare/v0.1.0...v0.2.0) (2026-03-20)
 
 
