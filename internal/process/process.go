@@ -75,7 +75,7 @@ func KillProcessWithPID(processID int32) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("process not found\n")
+	return fmt.Errorf("process not found")
 }
 
 func KillProcessWithPort(port int32) error {
@@ -92,5 +92,5 @@ func KillProcessWithPort(port int32) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("process not found\n")
+	return fmt.Errorf("process not found")
 }
