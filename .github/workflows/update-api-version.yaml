@@ -19,9 +19,9 @@ jobs:
           VERSION=$(grep -oP '\[\K[0-9]+\.[0-9]+\.[0-9]+' CHANGELOG.md | head -1)
           echo "::set-output name=VERSION::$VERSION"
 
-      - name: Update version in main.go
+      - name: Update Version in cmd/version.go
         run: |
-          sed -i "s/const Version = \".*\"/const Version = \"${{ steps.get_version.outputs.VERSION }}\"/" main.go
+          sed -i "s/const Version = \".*\"/const version = \"${{ steps.get_version.outputs.VERSION }}\"/" cmd/version.go
 
       - name: Commit and push if changed
         run: |
