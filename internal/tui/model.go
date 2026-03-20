@@ -20,6 +20,10 @@ var baseStyle = lipgloss.NewStyle().
 	BorderStyle(lipgloss.NormalBorder()).
 	BorderForeground(lipgloss.Color("240"))
 
+var versionStyle = lipgloss.NewStyle().
+	Foreground(lipgloss.Color(ColorLavender)).
+	Italic(true)
+
 var banner = "   ___  __ _  ___ ____ \n" +
 	"  / _ \\/  ' \\/ _ `/ _ \\\n" +
 	" / .__/_/_/_/\\_,_/_//_/\n" +
@@ -74,9 +78,10 @@ type model struct {
 	processes []process.Process
 	keys      keyMap
 	help      help.Model
+	version   string
 }
 
-func NewModel(table table.Model, processes []process.Process) *model {
+func NewModel(table table.Model, processes []process.Process, version string) *model {
 	h := help.New()
 
 	h.Styles.ShortKey = lipgloss.NewStyle().
@@ -95,6 +100,7 @@ func NewModel(table table.Model, processes []process.Process) *model {
 		processes: processes,
 		keys:      keys,
 		help:      h,
+		version:   version,
 	}
 }
 
@@ -158,7 +164,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() tea.View {
-	header := bannerStyle.Render(banner)
+	header := lipgloss.JoinHorizontal(
+		lipgloss.Left,
+		bannerStyle.Render(banner),
+		versionStyle.Render("v"+m.version),
+	)
 
 	tableView := baseStyle.Render(m.table.View())
 

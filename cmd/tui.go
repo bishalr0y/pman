@@ -38,7 +38,7 @@ func tui_init() {
 		Bold(false)
 	t.SetStyles(s)
 
-	m := tui.NewModel(t, nil)
+	m := tui.NewModel(t, nil, Version)
 	if _, err := tea.NewProgram(m).Run(); err != nil {
 		fmt.Println("Error running program:", err)
 	}
