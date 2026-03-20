@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/bishalr0y/pman/compare/v0.1.0...v0.2.0) (2026-03-20)
+
+
+### Features
+
+* add version command ([5942c2f](https://github.com/bishalr0y/pman/commit/5942c2f098ad98016b684ace90829c7d1e87742a))
+
 ## [0.1.0](https://github.com/bishalr0y/pman/compare/v0.0.1...v0.1.0) (2026-03-20)
 
 
