@@ -21,12 +21,12 @@ jobs:
 
       - name: Update Version in cmd/version.go
         run: |
-          sed -i "s/const Version = \".*\"/const version = \"${{ steps.get_version.outputs.VERSION }}\"/" cmd/version.go
+          sed -i "s/const Version = \".*\"/const Version = \"${{ steps.get_version.outputs.VERSION }}\"/" cmd/version.go
 
       - name: Commit and push if changed
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git add main.go
+          git add cmd/version.go
           git commit -m "Update version to ${{ steps.get_version.outputs.VERSION }}" || echo "No changes to commit"
           git push
