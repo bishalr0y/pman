@@ -14,10 +14,10 @@ type Process struct {
 	Port        uint32 `json:"port"`
 	ProcessID   int32  `json:"pid"`
 	ProcessName string `json:"name"`
-	Username    string `json:"username"`
 	Protocol    string `json:"protocol"`
-	StartedAt   string `json:"started_at"`
 	Memory      string `json:"memory"`
+	Username    string `json:"username"`
+	StartedAt   string `json:"started_at"`
 }
 
 // Helper: protocol detection
@@ -93,7 +93,10 @@ func ListProcesses() ([]Process, error) {
 
 		// basic info
 		name, _ := proc.Name()
-		username, _ := proc.Username()
+		username, err := proc.Username()
+		if err != nil || username == "" {
+			username = "unknown"
+		}
 
 		// start time
 		createTime, _ := proc.CreateTime()
@@ -112,10 +115,10 @@ func ListProcesses() ([]Process, error) {
 			Port:        conn.Laddr.Port,
 			ProcessID:   conn.Pid,
 			ProcessName: name,
-			Username:    username,
 			Protocol:    getProtocol(conn.Type),
-			StartedAt:   startedAt,
 			Memory:      memory,
+			Username:    username,
+			StartedAt:   startedAt,
 		}
 
 		processes = append(processes, p)

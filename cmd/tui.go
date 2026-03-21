@@ -14,7 +14,10 @@ func tui_init() {
 		{Title: "PORT", Width: 10},
 		{Title: "PID", Width: 10},
 		{Title: "PROCESS NAME", Width: 15},
+		{Title: "PROTOCOL", Width: 10},
+		{Title: "MEMORY", Width: 10},
 		{Title: "USERNAME", Width: 10},
+		{Title: "STARTED AT", Width: 20},
 	}
 
 	t := table.New(
@@ -22,7 +25,7 @@ func tui_init() {
 		table.WithRows([]table.Row{}),
 		table.WithFocused(true),
 		table.WithHeight(7),
-		table.WithWidth(50),
+		table.WithWidth(100),
 	)
 
 	s := table.DefaultStyles()

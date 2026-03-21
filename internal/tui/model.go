@@ -145,6 +145,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				strconv.FormatInt(int64(p.ProcessID), 10),
 				p.ProcessName,
 				p.Username,
+				p.Protocol,
+				p.Memory,
+				p.StartedAt,
 			}
 		}
 		m.table.SetRows(rows)
