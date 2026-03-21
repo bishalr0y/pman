@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/bishalr0y/pman/compare/v0.6.0...v0.6.1) (2026-03-21)
+
+
+### Bug Fixes
+
+* misorder of columns in TUI ([11d75fa](https://github.com/bishalr0y/pman/commit/11d75fad211d0140cad5fdf2df991039b641e499))
+
 ## [0.6.0](https://github.com/bishalr0y/pman/compare/v0.5.0...v0.6.0) (2026-03-21)
 
 
