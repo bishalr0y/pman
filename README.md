@@ -37,7 +37,8 @@ A terminal-based process manager with a beautiful TUI for viewing and managing l
 ### Using Homebrew (Recommended on macOS)
 
 ```bash
-brew install bishalr0y/homebrew-bishalr0y/pman
+brew tap bishalr0y/homebrew-bishalr0y
+brew install pman
 ```
 
 ### Using go install
