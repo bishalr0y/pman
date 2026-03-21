@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/bishalr0y/pman/compare/v0.7.0...v0.8.0) (2026-03-21)
+
+
+### Features
+
+* update TUI banner ([3509ee0](https://github.com/bishalr0y/pman/commit/3509ee052096430322f59851c40eeb9f53ed8663))
+
 ## [0.7.0](https://github.com/bishalr0y/pman/compare/v0.6.1...v0.7.0) (2026-03-21)
 
 
