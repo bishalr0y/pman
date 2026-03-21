@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/bishalr0y/pman/compare/v0.4.0...v0.5.0) (2026-03-21)
+
+
+### Features
+
+* enhance process listing with memory, protocol, and start time info ([34251cb](https://github.com/bishalr0y/pman/commit/34251cb3b2b3646d02d0fa6a7be222ea9914a0ec))
+
 ## [0.4.0](https://github.com/bishalr0y/pman/compare/v0.3.0...v0.4.0) (2026-03-20)
 
 
