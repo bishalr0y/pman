@@ -144,9 +144,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				strconv.FormatUint(uint64(p.Port), 10),
 				strconv.FormatInt(int64(p.ProcessID), 10),
 				p.ProcessName,
-				p.Username,
 				p.Protocol,
 				p.Memory,
+				p.Username,
 				p.StartedAt,
 			}
 		}
