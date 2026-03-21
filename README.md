@@ -1,7 +1,7 @@
 # pman
 
 <p align="center">
-  <img src="assets/gopher_transparent.png" alt="pman mascot" width="200"/>
+  <img src="assets/gopher_transparent.png" alt="pman mascot" width="500"/>
 </p>
 
 A terminal-based process manager with a beautiful TUI for viewing and managing listening network processes.
