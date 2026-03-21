@@ -1,7 +1,7 @@
 version: 2
 
 builds:
-  - dir: cmd
+  - dir: .
 
 brews:
   - name: pman
