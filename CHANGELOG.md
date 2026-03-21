@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/bishalr0y/pman/compare/v0.5.0...v0.6.0) (2026-03-21)
+
+
+### Features
+
+* add more process info the the tui ([27f9bd3](https://github.com/bishalr0y/pman/commit/27f9bd379abdeb6cd8ab2600fc49289c37979455))
+
 ## [0.5.0](https://github.com/bishalr0y/pman/compare/v0.4.0...v0.5.0) (2026-03-21)
 
 
