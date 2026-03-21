@@ -27,7 +27,7 @@ by other tools or scripts.`,
 			return
 		}
 
-		jsonProcesses, err := json.Marshal(processes)
+		jsonProcesses, err := json.MarshalIndent(processes, "", " ")
 		if err != nil {
 			fmt.Printf("failed to marshal: %v\n", err)
 		}
