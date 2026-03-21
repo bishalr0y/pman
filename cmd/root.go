@@ -1,6 +1,3 @@
-/*
-Copyright © 2026 Bishal Roy <bishalroy895@gmail.com>
-*/
 package cmd
 
 import (
@@ -37,15 +34,5 @@ func Execute() {
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// remove the completion command
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pman.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
