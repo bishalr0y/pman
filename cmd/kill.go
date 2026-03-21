@@ -1,3 +1,6 @@
+/*
+Copyright © 2026 Bishal Roy <bishalroy895@gmail.com>
+*/
 package cmd
 
 import (
@@ -34,4 +37,14 @@ command to find the PID of a process.`,
 
 func init() {
 	rootCmd.AddCommand(killCmd)
+
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// killCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// killCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
