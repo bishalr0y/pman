@@ -13,15 +13,15 @@ import (
 )
 
 var bannerStyle = lipgloss.NewStyle().
-	Foreground(lipgloss.Color(ColorTeal)).
+	Foreground(lipgloss.Color(ColorBanner)).
 	Bold(true)
 
 var baseStyle = lipgloss.NewStyle().
 	BorderStyle(lipgloss.NormalBorder()).
-	BorderForeground(lipgloss.Color("240"))
+	BorderForeground(lipgloss.Color(ColorBorderFg))
 
 var versionStyle = lipgloss.NewStyle().
-	Foreground(lipgloss.Color(ColorLavender)).
+	Foreground(lipgloss.Color(ColorVersion)).
 	Italic(true)
 
 var banner = `
@@ -92,15 +92,15 @@ func NewModel(table table.Model, processes []process.Process, version string) *m
 	h := help.New()
 
 	h.Styles.ShortKey = lipgloss.NewStyle().
-		Foreground(lipgloss.Color(ColorGreen)).
+		Foreground(lipgloss.Color(ColorHelpKey)).
 		Bold(true)
 
 	h.Styles.ShortDesc = lipgloss.NewStyle().
-		Foreground(lipgloss.Color(ColorMauve)).
+		Foreground(lipgloss.Color(ColorHelpDesc)).
 		Italic(true)
 
 	h.Styles.ShortSeparator = lipgloss.NewStyle().
-		Foreground(lipgloss.Color(ColorTeal))
+		Foreground(lipgloss.Color(ColorHelpSeparator))
 
 	return &model{
 		table:     table,

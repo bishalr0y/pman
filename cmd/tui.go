@@ -31,13 +31,13 @@ func tuiInit() {
 	s := table.DefaultStyles()
 	s.Header = s.Header.
 		BorderStyle(lipgloss.DoubleBorder()).
-		BorderForeground(lipgloss.Color("240")). // light grey
-		Foreground(lipgloss.Color(tui.ColorLavender)).
+		BorderForeground(lipgloss.Color(tui.ColorBorderFg)).
+		Foreground(lipgloss.Color(tui.ColorHeaderFg)).
 		BorderBottom(true).
 		Bold(true)
 	s.Selected = s.Selected.
-		Foreground(lipgloss.Color("229")).
-		Background(lipgloss.Color(tui.ColorLavender)).
+		Foreground(lipgloss.Color(tui.ColorSelectedFg)).
+		Background(lipgloss.Color(tui.ColorSelectedBg)).
 		Bold(false)
 	t.SetStyles(s)
 
