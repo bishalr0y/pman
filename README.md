@@ -22,7 +22,7 @@ A terminal-based process manager with a beautiful TUI for viewing and managing l
 - Auto-refresh every 2 seconds
 - Manual refresh with `r`
 - Vim-style navigation (`j`/`k` or arrow keys)
-- Beautiful color scheme with custom styling
+- Customizable color theme via `~/.config/pman/config.yaml`
 - Kill processes directly from the TUI
 
 ### CLI Commands
@@ -85,6 +85,25 @@ pman kill 1234
 # Kill process on a specific port
 pman killport 8080
 ```
+
+## Configuration
+
+pman reads config from `~/.config/pman/config.yaml`. On first run, it auto-creates the file with defaults:
+
+```yaml
+colors:
+  banner: "#8bd5ca"
+  version: "#7287fd"
+  help_key: "#a6e3a1"
+  help_desc: "#babbf1"
+  help_separator: "#8bd5ca"
+  header_fg: "#7287fd"
+  selected_bg: "#7287fd"
+  selected_fg: "#f9e2af"
+  border_fg: "#6c7086"
+```
+
+Each key controls a specific UI element — change any hex value to customize the theme.
 
 ## Requirements
 
