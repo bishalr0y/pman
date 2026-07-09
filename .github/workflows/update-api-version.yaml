@@ -1,8 +1,9 @@
 name: Update Version
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: [release-please]
+    types:
+      - completed
 
 permissions:
   contents: write
@@ -12,21 +13,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Extract latest version from CHANGELOG.md
-        id: get_version
+      - name: Get latest tag
+        id: get_tag
         run: |
-          VERSION=$(grep -oP '\[\K[0-9]+\.[0-9]+\.[0-9]+' CHANGELOG.md | head -1)
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "TAG=$TAG" >> $GITHUB_OUTPUT
+          VERSION="${TAG#v}"
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Update Version in cmd/version.go
         run: |
-          sed -i "s/const Version = \".*\"/const Version = \"${{ steps.get_version.outputs.VERSION }}\"/" cmd/version.go
+          sed -i "s/const Version = \".*\"/const Version = \"${{ steps.get_tag.outputs.VERSION }}\"/" cmd/version.go
 
       - name: Commit and push if changed
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
           git add cmd/version.go
-          git commit -m "Update version to ${{ steps.get_version.outputs.VERSION }}" || echo "No changes to commit"
-          git push
+          git diff --cached --quiet || (git commit -m "chore: bump version to ${{ steps.get_tag.outputs.VERSION }}" && git push)
