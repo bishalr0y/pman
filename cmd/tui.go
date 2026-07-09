@@ -9,7 +9,7 @@ import (
 	"github.com/bishalr0y/pman/internal/tui"
 )
 
-func tui_init() {
+func tuiInit() {
 	columns := []table.Column{
 		{Title: "PORT", Width: 10},
 		{Title: "PID", Width: 10},
@@ -31,7 +31,7 @@ func tui_init() {
 	s := table.DefaultStyles()
 	s.Header = s.Header.
 		BorderStyle(lipgloss.DoubleBorder()).
-		BorderForeground(lipgloss.Color("240")).
+		BorderForeground(lipgloss.Color("240")). // light grey
 		Foreground(lipgloss.Color(tui.ColorLavender)).
 		BorderBottom(true).
 		Bold(true)
