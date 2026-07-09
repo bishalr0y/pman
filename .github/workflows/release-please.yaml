@@ -19,3 +19,4 @@ jobs:
           release-type: go
           skip-labeling: true
           bump-minor-pre-major: false
+          manifest-file: .release-please-manifest.json
