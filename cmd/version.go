@@ -10,7 +10,7 @@ import (
 )
 
 // gets update by github action
-const Version = "2.0.0"
+const Version = "1.0.0"
 
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
