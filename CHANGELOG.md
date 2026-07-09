@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/bishalr0y/pman/compare/v1.0.0...v1.1.0) (2026-07-09)
+
+
+### Features
+
+* add YAML config with semantic color theme support ([91f4eab](https://github.com/bishalr0y/pman/commit/91f4eab4a6b60ff0ff54569ace348dcba2cb7536))
+
 ## [1.0.0](https://github.com/bishalr0y/pman/compare/v0.8.0...v1.0.0) (2026-03-21)
 
 
