@@ -12,17 +12,23 @@ import (
 	"github.com/bishalr0y/pman/internal/process"
 )
 
-var bannerStyle = lipgloss.NewStyle().
-	Foreground(lipgloss.Color(ColorBanner)).
-	Bold(true)
+func bannerStyle(c Colors) lipgloss.Style {
+	return lipgloss.NewStyle().
+		Foreground(lipgloss.Color(c.Banner)).
+		Bold(true)
+}
 
-var baseStyle = lipgloss.NewStyle().
-	BorderStyle(lipgloss.NormalBorder()).
-	BorderForeground(lipgloss.Color(ColorBorderFg))
+func baseStyle(c Colors) lipgloss.Style {
+	return lipgloss.NewStyle().
+		BorderStyle(lipgloss.NormalBorder()).
+		BorderForeground(lipgloss.Color(c.BorderFg))
+}
 
-var versionStyle = lipgloss.NewStyle().
-	Foreground(lipgloss.Color(ColorVersion)).
-	Italic(true)
+func versionStyle(c Colors) lipgloss.Style {
+	return lipgloss.NewStyle().
+		Foreground(lipgloss.Color(c.Version)).
+		Italic(true)
+}
 
 var banner = `
  ██▓███   ███▄ ▄███▓ ▄▄▄       ███▄    █ 
@@ -86,21 +92,22 @@ type model struct {
 	keys      keyMap
 	help      help.Model
 	version   string
+	colors    Colors
 }
 
-func NewModel(table table.Model, processes []process.Process, version string) *model {
+func NewModel(table table.Model, processes []process.Process, version string, colors Colors) *model {
 	h := help.New()
 
 	h.Styles.ShortKey = lipgloss.NewStyle().
-		Foreground(lipgloss.Color(ColorHelpKey)).
+		Foreground(lipgloss.Color(colors.HelpKey)).
 		Bold(true)
 
 	h.Styles.ShortDesc = lipgloss.NewStyle().
-		Foreground(lipgloss.Color(ColorHelpDesc)).
+		Foreground(lipgloss.Color(colors.HelpDesc)).
 		Italic(true)
 
 	h.Styles.ShortSeparator = lipgloss.NewStyle().
-		Foreground(lipgloss.Color(ColorHelpSeparator))
+		Foreground(lipgloss.Color(colors.HelpSeparator))
 
 	return &model{
 		table:     table,
@@ -108,6 +115,7 @@ func NewModel(table table.Model, processes []process.Process, version string) *m
 		keys:      keys,
 		help:      h,
 		version:   version,
+		colors:    colors,
 	}
 }
 
@@ -128,13 +136,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "q", "ctrl+c":
-			// quit
 			return m, tea.Quit
 		case "r":
-			// refresh (refetch the processes)
 			return m, fetchProcesses()
 		case "enter":
-			// kill the process
 			processID, err := strconv.ParseInt(m.table.SelectedRow()[1], 10, 32)
 			if err != nil {
 				return m, tea.Printf("failed to parse the processID: %v", err)
@@ -176,11 +181,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() tea.View {
 	header := lipgloss.JoinHorizontal(
 		lipgloss.Left,
-		bannerStyle.Render(banner),
-		versionStyle.Render("v"+m.version),
+		bannerStyle(m.colors).Render(banner),
+		versionStyle(m.colors).Render("v"+m.version),
 	)
 
-	tableView := baseStyle.Render(m.table.View())
+	tableView := baseStyle(m.colors).Render(m.table.View())
 
 	helpView := "  " + m.help.View(m.keys) + "\n"
 
