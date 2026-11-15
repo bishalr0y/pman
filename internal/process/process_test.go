@@ -38,8 +38,8 @@ func TestListAndKillProcessWithPID(t *testing.T) {
 		t.Fatalf("process with PID %d not found", cmd.Process.Pid)
 	}
 
-	// kill the dummy process
-	if err := KillProcessWithPID(foundPID); err != nil {
+	// terminate the dummy process (SIGTERM)
+	if err := KillProcessWithPID(foundPID, false); err != nil {
 		t.Fatalf("KillProcess failed: %v", err)
 	}
 
@@ -115,8 +115,8 @@ func TestListAndKillProcessWithPort(t *testing.T) {
 		t.Fatalf("process with port %d not found", testPort)
 	}
 
-	// kill the dummy process by port
-	if err := KillProcessWithPort(testPort); err != nil {
+	// terminate the dummy process by port (SIGTERM)
+	if err := KillProcessWithPort(testPort, false); err != nil {
 		t.Fatalf("KillProcessWithPort failed: %v", err)
 	}
 

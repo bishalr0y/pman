@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -74,7 +75,7 @@ var keys = keyMap{
 	),
 	Kill: key.NewBinding(
 		key.WithKeys("enter"),
-		key.WithHelp("enter", "kill"),
+		key.WithHelp("enter", "confirm kill"),
 	),
 	Refresh: key.NewBinding(
 		key.WithKeys("r"),
@@ -105,13 +106,14 @@ func tableSizeForWindow(width, height int) (w, h int) {
 }
 
 type model struct {
-	table     table.Model
-	processes []process.Process
-	status    string
-	keys      keyMap
-	help      help.Model
-	version   string
-	colors    Colors
+	table          table.Model
+	processes      []process.Process
+	status         string
+	pendingKillPID int32
+	keys           keyMap
+	help           help.Model
+	version        string
+	colors         Colors
 }
 
 func statusStyle(c Colors) lipgloss.Style {
@@ -167,17 +169,44 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.status = "Error listing processes: " + msg.err.Error()
 
 	case tea.KeyMsg:
+		if m.pendingKillPID != 0 {
+			switch msg.String() {
+			case "y", "enter":
+				pid := m.pendingKillPID
+				m.pendingKillPID = 0
+				m.status = ""
+				return m, killAndRefresh(pid, false)
+			case "n", "esc":
+				m.pendingKillPID = 0
+				m.status = ""
+				return m, nil
+			case "q", "ctrl+c":
+				return m, tea.Quit
+			default:
+				return m, nil
+			}
+		}
+
 		switch msg.String() {
 		case "q", "ctrl+c":
+			return m, tea.Quit
+		case "esc":
 			return m, tea.Quit
 		case "r":
 			return m, fetchProcesses()
 		case "enter":
-			processID, err := strconv.ParseInt(m.table.SelectedRow()[2], 10, 32)
-			if err != nil {
-				return m, tea.Printf("failed to parse the processID: %v", err)
+			selected := m.table.SelectedRow()
+			if len(selected) < 3 {
+				return m, nil
 			}
-			return m, killAndRefresh(int32(processID))
+			processID, err := strconv.ParseInt(selected[2], 10, 32)
+			if err != nil {
+				m.status = fmt.Sprintf("Invalid PID: %v", err)
+				return m, nil
+			}
+			m.pendingKillPID = int32(processID)
+			m.status = fmt.Sprintf("Kill PID %d? (y/n)", processID)
+			return m, nil
 		}
 
 	case []process.Process:
@@ -204,9 +233,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case processKilledMsg:
 		if msg.err != nil {
-			return m, tea.Printf("failed to kill process: %v", msg.err)
+			m.status = fmt.Sprintf("Failed to kill PID %d: %v", msg.pid, msg.err)
+			return m, nil
 		}
-		return m, tea.Printf("killed process: %d", msg.pid)
+		m.status = fmt.Sprintf("Killed PID %d", msg.pid)
+		return m, nil
 	}
 
 	m.table, cmd = m.table.Update(msg)

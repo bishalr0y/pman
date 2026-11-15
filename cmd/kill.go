@@ -12,12 +12,16 @@ import (
 )
 
 // killCmd represents the kill command
+var killForce bool
+
 var killCmd = &cobra.Command{
 	Use:          "kill <pid>",
 	Args:         cobra.ExactArgs(1),
 	Short:        "Kill a process by PID",
 	SilenceUsage: true,
 	Long: `Kill a running process using its process ID (PID).
+
+By default sends SIGTERM. Use --force for SIGKILL.
 
 Provide the PID of the process you want to terminate. Use the 'json'
 command to find the PID of a process.`,
@@ -27,7 +31,7 @@ command to find the PID of a process.`,
 			return fmt.Errorf("invalid PID: %w", err)
 		}
 
-		if err := process.KillProcessWithPID(int32(pid)); err != nil {
+		if err := process.KillProcessWithPID(int32(pid), killForce); err != nil {
 			return fmt.Errorf("failed to kill process with PID %d: %w", pid, err)
 		}
 		fmt.Fprintf(cmd.OutOrStdout(), "Success: Killed process with PID %d\n", pid)
@@ -37,6 +41,7 @@ command to find the PID of a process.`,
 
 func init() {
 	rootCmd.AddCommand(killCmd)
+	killCmd.Flags().BoolVar(&killForce, "force", false, "Send SIGKILL instead of SIGTERM")
 
 	// Here you will define your flags and configuration settings.
 

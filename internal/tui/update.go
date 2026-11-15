@@ -24,9 +24,9 @@ func fetchProcesses() tea.Cmd {
 	}
 }
 
-func killAndRefresh(pid int32) tea.Cmd {
+func killAndRefresh(pid int32, force bool) tea.Cmd {
 	return func() tea.Msg {
-		if err := process.KillProcessWithPID(pid); err != nil {
+		if err := process.KillProcessWithPID(pid, force); err != nil {
 			return processKilledMsg{pid: pid, err: err}
 		}
 
