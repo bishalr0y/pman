@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.2](https://github.com/bishalr0y/pman/compare/v4.0.1...v4.0.2) (2026-11-15)
+
+
+### Bug Fixes
+
+* pin release-please baseline after v4.0.1 tag repair ([26a65d0](https://github.com/bishalr0y/pman/commit/26a65d0246777096d37335b7b046af97400f7130))
+
 ## [4.0.1](https://github.com/bishalr0y/pman/compare/v4.0.0...v4.0.1) (2026-11-15)
 
 
