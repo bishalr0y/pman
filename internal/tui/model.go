@@ -86,6 +86,24 @@ var keys = keyMap{
 	),
 }
 
+// space for ASCII banner, help line, table header, and borders (not data rows)
+const layoutChromeHeight = 15
+
+const tableMinHeight = 8
+const tableMinWidth = 98
+
+func tableSizeForWindow(width, height int) (w, h int) {
+	h = height - layoutChromeHeight
+	if h < tableMinHeight {
+		h = tableMinHeight
+	}
+	w = width - 2
+	if w < tableMinWidth {
+		w = tableMinWidth
+	}
+	return w, h
+}
+
 type model struct {
 	table     table.Model
 	processes []process.Process
@@ -133,6 +151,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		w, h := tableSizeForWindow(msg.Width, msg.Height)
+		m.table.SetWidth(w)
+		m.table.SetHeight(h)
+
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "q", "ctrl+c":
