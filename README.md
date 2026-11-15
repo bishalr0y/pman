@@ -17,7 +17,7 @@ A terminal-based process manager with a beautiful TUI for viewing and managing l
 
 ### TUI Features
 - View all processes listening on network ports
-- Display PORT, PID, Process Name, Protocol, Memory, Username, and Started At
+- Display bind address, PORT, PID, Process Name, Protocol, Memory, Username, and Started At
 - Human-readable memory format (KB, MB, GB)
 - Auto-refresh every 2 seconds
 - Manual refresh with `r`

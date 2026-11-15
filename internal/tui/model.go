@@ -140,7 +140,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "r":
 			return m, fetchProcesses()
 		case "enter":
-			processID, err := strconv.ParseInt(m.table.SelectedRow()[1], 10, 32)
+			processID, err := strconv.ParseInt(m.table.SelectedRow()[2], 10, 32)
 			if err != nil {
 				return m, tea.Printf("failed to parse the processID: %v", err)
 			}
@@ -153,6 +153,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		rows := make([]table.Row, len(processes))
 		for i, p := range processes {
 			rows[i] = table.Row{
+				p.Address,
 				strconv.FormatUint(uint64(p.Port), 10),
 				strconv.FormatInt(int64(p.ProcessID), 10),
 				p.ProcessName,

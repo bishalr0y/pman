@@ -29,6 +29,7 @@ func tuiInit() {
 	}
 
 	columns := []table.Column{
+		{Title: "ADDRESS", Width: 16},
 		{Title: "PORT", Width: 10},
 		{Title: "PID", Width: 10},
 		{Title: "PROCESS NAME", Width: 15},
