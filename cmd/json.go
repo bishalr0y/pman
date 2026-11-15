@@ -13,26 +13,27 @@ import (
 
 // jsonCmd represents the json command
 var jsonCmd = &cobra.Command{
-	Use:   "json",
-	Short: "List running processes in JSON format",
+	Use:          "json",
+	Short:        "List running processes in JSON format",
+	SilenceUsage: true,
 	Long: `Display all running processes as a JSON array.
 
 This command retrieves information about all currently running processes
 on the system and outputs them in JSON format for easy processing
 by other tools or scripts.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		processes, err := process.ListProcesses()
 		if err != nil {
-			fmt.Printf("failed to get the processes: %v\n", err)
-			return
+			return fmt.Errorf("failed to get processes: %w", err)
 		}
 
 		jsonProcesses, err := json.MarshalIndent(processes, "", " ")
 		if err != nil {
-			fmt.Printf("failed to marshal: %v\n", err)
+			return fmt.Errorf("failed to marshal: %w", err)
 		}
 
-		fmt.Println(string(jsonProcesses))
+		fmt.Fprintln(cmd.OutOrStdout(), string(jsonProcesses))
+		return nil
 	},
 }
 

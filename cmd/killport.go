@@ -14,27 +14,22 @@ import (
 
 // killportCmd represents the killport command
 var killportCmd = &cobra.Command{
-	Use:   "killport <port>",
-	Args:  cobra.ExactArgs(1),
-	Short: "Kill a process listening on a specific port.",
-	Long:  "Kills the process that is listening on the specified port.",
-	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			fmt.Println("Error: Port argument is required")
-			return
-		}
-
+	Use:          "killport <port>",
+	Args:         cobra.ExactArgs(1),
+	Short:        "Kill a process listening on a specific port.",
+	SilenceUsage: true,
+	Long:         "Kills the process that is listening on the specified port.",
+	RunE: func(cmd *cobra.Command, args []string) error {
 		port, err := strconv.ParseInt(args[0], 10, 32)
 		if err != nil {
-			fmt.Println("Error: Invalid Port provided")
-			return
+			return fmt.Errorf("invalid port: %w", err)
 		}
 
 		if err := process.KillProcessWithPort(int32(port)); err != nil {
-			fmt.Printf("Error: Failed to kill process with Port %d: %v\n", port, err)
-		} else {
-			fmt.Printf("Success: Killed process with Port %d\n", port)
+			return fmt.Errorf("failed to kill process on port %d: %w", port, err)
 		}
+		fmt.Fprintf(cmd.OutOrStdout(), "Success: Killed process with Port %d\n", port)
+		return nil
 	},
 }
 
