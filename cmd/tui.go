@@ -10,10 +10,10 @@ import (
 	"github.com/bishalr0y/pman/internal/tui"
 )
 
-func tuiInit() {
+func tuiInit() error {
 	cfg, err := config.ReadConfig()
 	if err != nil {
-		panic(fmt.Errorf("failed to read config: %w", err))
+		return fmt.Errorf("failed to read config: %w", err)
 	}
 
 	colors := tui.Colors{
@@ -62,6 +62,7 @@ func tuiInit() {
 
 	m := tui.NewModel(t, nil, Version, colors)
 	if _, err := tea.NewProgram(m).Run(); err != nil {
-		fmt.Println("Error running program:", err)
+		return fmt.Errorf("error running program: %w", err)
 	}
+	return nil
 }

@@ -21,9 +21,8 @@ var rootCmd = &cobra.Command{
 	// to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	Run: func(cmd *cobra.Command, args []string) {
-		// load the tui
-		tuiInit()
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return tuiInit()
 	},
 }
 

@@ -107,10 +107,17 @@ func tableSizeForWindow(width, height int) (w, h int) {
 type model struct {
 	table     table.Model
 	processes []process.Process
+	status    string
 	keys      keyMap
 	help      help.Model
 	version   string
 	colors    Colors
+}
+
+func statusStyle(c Colors) lipgloss.Style {
+	return lipgloss.NewStyle().
+		Foreground(lipgloss.Color(c.SelectedFg)).
+		Bold(true)
 }
 
 func NewModel(table table.Model, processes []process.Process, version string, colors Colors) *model {
@@ -156,6 +163,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.table.SetWidth(w)
 		m.table.SetHeight(h)
 
+	case listErrMsg:
+		m.status = "Error listing processes: " + msg.err.Error()
+
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "q", "ctrl+c":
@@ -171,6 +181,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 	case []process.Process:
+		m.status = ""
 		processes := msg
 		m.processes = processes
 		rows := make([]table.Row, len(processes))
@@ -211,12 +222,18 @@ func (m model) View() tea.View {
 
 	tableView := baseStyle(m.colors).Render(m.table.View())
 
+	var statusView string
+	if m.status != "" {
+		statusView = statusStyle(m.colors).Render("  "+m.status) + "\n"
+	}
+
 	helpView := "  " + m.help.View(m.keys) + "\n"
 
 	content := lipgloss.JoinVertical(
 		lipgloss.Left,
 		header,
 		tableView,
+		statusView,
 		helpView,
 	)
 

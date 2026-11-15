@@ -10,11 +10,15 @@ type processKilledMsg struct {
 	err error
 }
 
+type listErrMsg struct {
+	err error
+}
+
 func fetchProcesses() tea.Cmd {
 	return func() tea.Msg {
 		processes, err := process.ListProcesses()
 		if err != nil {
-			return err
+			return listErrMsg{err: err}
 		}
 		return processes
 	}
@@ -28,7 +32,7 @@ func killAndRefresh(pid int32) tea.Cmd {
 
 		processes, err := process.ListProcesses()
 		if err != nil {
-			return processKilledMsg{pid: pid, err: err}
+			return listErrMsg{err: err}
 		}
 		return processes
 	}
