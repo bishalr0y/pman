@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.0](https://github.com/bishalr0y/pman/compare/v4.0.2...v4.1.0) (2026-11-15)
+
+
+### Features
+
+* confirm TUI kills and SIGTERM by default ([0cf8248](https://github.com/bishalr0y/pman/commit/0cf8248b2c50c6691ecd0ce09df46e10f55bcdc0))
+
 ## [4.0.2](https://github.com/bishalr0y/pman/compare/v4.0.1...v4.0.2) (2026-11-15)
 
 
