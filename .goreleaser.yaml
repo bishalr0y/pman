@@ -2,6 +2,9 @@ version: 2
 
 builds:
   - dir: .
+    ldflags:
+      - -s -w
+      - -X github.com/bishalr0y/pman/cmd.Version={{.Version}}
 
 brews:
   - name: pman
