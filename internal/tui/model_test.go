@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"charm.land/bubbles/v2/table"
+	tea "charm.land/bubbletea/v2"
 	"github.com/bishalr0y/pman/internal/process"
 )
 
@@ -43,5 +44,54 @@ func TestUpdate_processList_clearsStatus(t *testing.T) {
 	got := updated.(model)
 	if got.status != "" {
 		t.Fatalf("status = %q, want empty after successful list", got.status)
+	}
+}
+
+func seedTableRow(m *model) {
+	m.table.SetRows([]table.Row{
+		{"8080", "127.0.0.1", "42", "test", "tcp", "1 MB", "u", "now"},
+	})
+}
+
+func TestUpdate_enter_startsKillConfirm(t *testing.T) {
+	m := NewModel(testTable(), nil, "test", Colors{})
+	seedTableRow(m)
+
+	updated, cmd := m.Update(tea.KeyPressMsg{Code: tea.KeyEnter})
+	got := updated.(model)
+	if got.pendingKillPID != 42 {
+		t.Fatalf("pendingKillPID = %d, want 42", got.pendingKillPID)
+	}
+	if got.status != "Kill PID 42? (y/n)" {
+		t.Fatalf("status = %q, want confirm prompt", got.status)
+	}
+	if cmd != nil {
+		t.Fatal("expected no cmd while awaiting confirmation")
+	}
+}
+
+func TestUpdate_confirmCancel_doesNotKill(t *testing.T) {
+	m := NewModel(testTable(), nil, "test", Colors{})
+	seedTableRow(m)
+
+	updated, _ := m.Update(tea.KeyPressMsg{Code: tea.KeyEnter})
+	got := updated.(model)
+
+	updated, cmd := got.Update(tea.KeyPressMsg{Text: "n"})
+	got = updated.(model)
+	if got.pendingKillPID != 0 {
+		t.Fatalf("pendingKillPID = %d, want 0 after cancel", got.pendingKillPID)
+	}
+	if cmd != nil {
+		t.Fatal("expected no kill cmd on cancel")
+	}
+}
+
+func TestUpdate_emptySelection_noPanic(t *testing.T) {
+	m := NewModel(testTable(), nil, "test", Colors{})
+	updated, cmd := m.Update(tea.KeyPressMsg{Code: tea.KeyEnter})
+	got := updated.(model)
+	if got.pendingKillPID != 0 || cmd != nil {
+		t.Fatalf("expected no confirm on empty table, pending=%d cmd=%v", got.pendingKillPID, cmd)
 	}
 }

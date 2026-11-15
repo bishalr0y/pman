@@ -23,13 +23,13 @@ A terminal-based process manager with a beautiful TUI for viewing and managing l
 - Manual refresh with `r`
 - Vim-style navigation (`j`/`k` or arrow keys)
 - Customizable color theme via `~/.config/pman/config.yaml`
-- Kill processes directly from the TUI
+- Kill processes from the TUI with confirmation (SIGTERM by default)
 
 ### CLI Commands
 - `pman` - Launch interactive TUI (default)
 - `pman json` - Output process list as JSON
-- `pman kill <pid>` - Kill process by PID
-- `pman killport <port>` - Kill process listening on a specific port
+- `pman kill [--force] <pid>` - Terminate process by PID (SIGTERM; `--force` for SIGKILL)
+- `pman killport [--force] <port>` - Terminate process on port (SIGTERM; `--force` for SIGKILL)
 - `pman version` - Show version information
 
 ## Installation
@@ -69,7 +69,7 @@ pman
 |-----|--------|
 | `↑` / `k` | Move up |
 | `↓` / `j` | Move down |
-| `Enter` | Kill selected process |
+| `Enter` | Confirm kill for selected process (`y`/`Enter` to proceed, `n`/`Esc` to cancel) |
 | `r` | Refresh process list |
 | `q` / `Esc` / `Ctrl+C` | Quit |
 
@@ -79,10 +79,13 @@ pman
 # Output processes as JSON
 pman json
 
-# Kill a process by PID
+# Terminate a process by PID (SIGTERM)
 pman kill 1234
 
-# Kill process on a specific port
+# Force kill (SIGKILL)
+pman kill --force 1234
+
+# Terminate process on a specific port
 pman killport 8080
 ```
 

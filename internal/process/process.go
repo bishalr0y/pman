@@ -182,21 +182,26 @@ func ListProcesses() ([]Process, error) {
 	return processes, nil
 }
 
-// Kill by PID
-func KillProcessWithPID(processID int32) error {
+// Kill by PID. Sends SIGTERM unless force is true (SIGKILL).
+func KillProcessWithPID(processID int32, force bool) error {
 	proc, err := process.NewProcess(processID)
 	if err != nil {
 		return fmt.Errorf("process not found")
 	}
 
-	if err := proc.Kill(); err != nil {
+	if force {
+		err = proc.Kill()
+	} else {
+		err = proc.Terminate()
+	}
+	if err != nil {
 		return err
 	}
 	return nil
 }
 
-// Kill by Port
-func KillProcessWithPort(port int32) error {
+// Kill by Port. Sends SIGTERM unless force is true (SIGKILL).
+func KillProcessWithPort(port int32, force bool) error {
 	processes, err := ListProcesses()
 	if err != nil {
 		return err
@@ -204,7 +209,7 @@ func KillProcessWithPort(port int32) error {
 
 	for _, p := range processes {
 		if int32(p.Port) == port {
-			return KillProcessWithPID(p.ProcessID)
+			return KillProcessWithPID(p.ProcessID, force)
 		}
 	}
 
