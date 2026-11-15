@@ -10,7 +10,7 @@ import (
 )
 
 // Version is bumped by Release Please on release PRs; GoReleaser overrides via ldflags on tagged builds.
-const Version = "4.0.1" // x-release-please-version
+const Version = "5.0.0" // x-release-please-version
 
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
