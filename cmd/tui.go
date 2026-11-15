@@ -36,7 +36,7 @@ func tuiInit() {
 		{Title: "PROTOCOL", Width: 10},
 		{Title: "MEMORY", Width: 10},
 		{Title: "USERNAME", Width: 10},
-		{Title: "STARTED AT", Width: 20},
+		{Title: "STARTED AT", Width: 22},
 	}
 
 	t := table.New(
@@ -44,7 +44,7 @@ func tuiInit() {
 		table.WithRows([]table.Row{}),
 		table.WithFocused(true),
 		table.WithHeight(7),
-		table.WithWidth(100),
+		table.WithWidth(120),
 	)
 
 	s := table.DefaultStyles()
