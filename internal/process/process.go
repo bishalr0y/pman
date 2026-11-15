@@ -29,10 +29,12 @@ type pidInfo struct {
 }
 
 func formatBindAddress(ip string) string {
-	if ip == "" {
+	switch ip {
+	case "", "*", "0.0.0.0":
 		return "0.0.0.0"
+	default:
+		return ip
 	}
-	return ip
 }
 
 func socketKey(pid int32, protocol, address string, port uint32) string {

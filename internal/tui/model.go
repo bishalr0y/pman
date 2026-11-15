@@ -153,8 +153,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		rows := make([]table.Row, len(processes))
 		for i, p := range processes {
 			rows[i] = table.Row{
-				p.Address,
 				strconv.FormatUint(uint64(p.Port), 10),
+				p.Address,
 				strconv.FormatInt(int64(p.ProcessID), 10),
 				p.ProcessName,
 				p.Protocol,
