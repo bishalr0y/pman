@@ -11,6 +11,7 @@ import (
 
 // Process struct (cleaned up)
 type Process struct {
+	Address     string `json:"address"`
 	Port        uint32 `json:"port"`
 	ProcessID   int32  `json:"pid"`
 	ProcessName string `json:"name"`
@@ -18,6 +19,62 @@ type Process struct {
 	Memory      string `json:"memory"`
 	Username    string `json:"username"`
 	StartedAt   string `json:"started_at"`
+}
+
+type pidInfo struct {
+	name      string
+	username  string
+	memory    string
+	startedAt string
+}
+
+func formatBindAddress(ip string) string {
+	switch ip {
+	case "", "*", "0.0.0.0":
+		return "0.0.0.0"
+	default:
+		return ip
+	}
+}
+
+func socketKey(pid int32, protocol, address string, port uint32) string {
+	return fmt.Sprintf("%d|%s|%s|%d", pid, protocol, address, port)
+}
+
+func lookupPIDInfo(pid int32, cache map[int32]pidInfo) (pidInfo, bool) {
+	info, ok := cache[pid]
+	return info, ok
+}
+
+func fetchPIDInfo(pid int32) (pidInfo, error) {
+	proc, err := process.NewProcess(pid)
+	if err != nil {
+		return pidInfo{}, err
+	}
+
+	name, _ := proc.Name()
+	username, err := proc.Username()
+	if err != nil || username == "" {
+		username = "unknown"
+	}
+
+	createTime, _ := proc.CreateTime()
+	startedAt := formatStartTime(createTime)
+
+	memInfo, err := proc.MemoryInfo()
+	var memory string
+	if err == nil {
+		memory = formatMemory(memInfo.RSS)
+	} else {
+		memory = "unknown"
+	}
+
+	return pidInfo{
+		name:      name,
+		username:  username,
+		memory:    memory,
+		startedAt: startedAt,
+	}, nil
 }
 
 // Helper: protocol detection
@@ -58,16 +115,28 @@ func formatMemory(bytes uint64) string {
 	}
 }
 
+func listConnections() ([]gnet.ConnectionStat, error) {
+	var connections []gnet.ConnectionStat
+	for _, kind := range []string{"inet", "inet6"} {
+		conns, err := gnet.Connections(kind)
+		if err != nil {
+			return nil, err
+		}
+		connections = append(connections, conns...)
+	}
+	return connections, nil
+}
+
 func ListProcesses() ([]Process, error) {
 	var processes []Process
 
-	connections, err := gnet.Connections("inet")
+	connections, err := listConnections()
 	if err != nil {
 		return processes, err
 	}
 
-	// avoid duplicate PID processing
-	seen := make(map[int32]bool)
+	seenSocket := make(map[string]bool)
+	pidCache := make(map[int32]pidInfo)
 
 	for _, conn := range connections {
 
@@ -80,48 +149,34 @@ func ListProcesses() ([]Process, error) {
 			continue
 		}
 
-		// skip duplicate PIDs
-		if seen[conn.Pid] {
+		protocol := getProtocol(conn.Type)
+		address := formatBindAddress(conn.Laddr.IP)
+		key := socketKey(conn.Pid, protocol, address, conn.Laddr.Port)
+		if seenSocket[key] {
 			continue
 		}
-		seen[conn.Pid] = true
+		seenSocket[key] = true
 
-		proc, err := process.NewProcess(conn.Pid)
-		if err != nil {
-			continue
+		info, ok := lookupPIDInfo(conn.Pid, pidCache)
+		if !ok {
+			var err error
+			info, err = fetchPIDInfo(conn.Pid)
+			if err != nil {
+				continue
+			}
+			pidCache[conn.Pid] = info
 		}
 
-		// basic info
-		name, _ := proc.Name()
-		username, err := proc.Username()
-		if err != nil || username == "" {
-			username = "unknown"
-		}
-
-		// start time
-		createTime, _ := proc.CreateTime()
-		startedAt := formatStartTime(createTime)
-
-		// memory usage
-		memInfo, err := proc.MemoryInfo()
-		var memory string
-		if err == nil {
-			memory = formatMemory(memInfo.RSS)
-		} else {
-			memory = "unknown"
-		}
-
-		p := Process{
+		processes = append(processes, Process{
+			Address:     address,
 			Port:        conn.Laddr.Port,
 			ProcessID:   conn.Pid,
-			ProcessName: name,
-			Protocol:    getProtocol(conn.Type),
-			Memory:      memory,
-			Username:    username,
-			StartedAt:   startedAt,
-		}
-
-		processes = append(processes, p)
+			ProcessName: info.name,
+			Protocol:    protocol,
+			Memory:      info.memory,
+			Username:    info.username,
+			StartedAt:   info.startedAt,
+		})
 	}
 
 	return processes, nil
