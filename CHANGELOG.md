@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.0.1](https://github.com/bishalr0y/pman/compare/v4.0.0...v4.0.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* repair release-please manifest after cherry-pick conflict ([ebf6776](https://github.com/bishalr0y/pman/commit/ebf6776f1f26ca8d4f6688a7cbba83c97dba924f))
+* stop release CI loop and sync version via release-please ([f091437](https://github.com/bishalr0y/pman/commit/f0914379d092a40d87378ec7b66c42423838476d))
+
 ## [4.0.0](https://github.com/bishalr0y/pman/compare/v3.0.0...v4.0.0) (2026-11-15)
 
 
