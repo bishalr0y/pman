@@ -1,5 +1,29 @@
 # Changelog
 
+## [6.4.0](https://github.com/bishalr0y/pman/compare/v6.3.0...v6.4.0) (2026-11-16)
+
+
+### Features
+
+* confirm TUI kills and SIGTERM by default ([0cf8248](https://github.com/bishalr0y/pman/commit/0cf8248b2c50c6691ecd0ce09df46e10f55bcdc0))
+* floating kill confirm listing every listen socket ([f3ac3fc](https://github.com/bishalr0y/pman/commit/f3ac3fc305a3e3e14710d13b700088935fa5fb8e))
+* TCP-only TUI default and config process hides ([254f69e](https://github.com/bishalr0y/pman/commit/254f69effcba7c7383a0ab0073a61aa2beaaa3b4))
+
+
+### Bug Fixes
+
+* list each listen socket with bind address ([93b2bf6](https://github.com/bishalr0y/pman/commit/93b2bf68cfa50ae4fcaa8b041a879ef436e7e5d2))
+* non-zero CLI exits and TUI list errors ([37d0646](https://github.com/bishalr0y/pman/commit/37d0646ecb27950a76f97b5b1f130013a9d01a7e))
+* normalize wildcard bind and reorder TUI columns ([67b4de7](https://github.com/bishalr0y/pman/commit/67b4de748f59d8f81d554c1f77ba9f67768f68a0))
+* pin release-please baseline after v4.0.1 tag repair ([26a65d0](https://github.com/bishalr0y/pman/commit/26a65d0246777096d37335b7b046af97400f7130))
+* prevent release-please infinite loop and fix version bumps ([ceff252](https://github.com/bishalr0y/pman/commit/ceff252fc9033192b9afcdcaf916ec0aada5af2e))
+* repair release-please manifest after cherry-pick conflict ([ebf6776](https://github.com/bishalr0y/pman/commit/ebf6776f1f26ca8d4f6688a7cbba83c97dba924f))
+* size process table to terminal height ([e26c21e](https://github.com/bishalr0y/pman/commit/e26c21e0fa77ca80b7b129d63bdfdaed91c7d9a5))
+* stop release CI loop and sync version via release-please ([f091437](https://github.com/bishalr0y/pman/commit/f0914379d092a40d87378ec7b66c42423838476d))
+* stop release CI loop and sync version via release-please ([a794945](https://github.com/bishalr0y/pman/commit/a79494500d23f52d4149b3959cbbb268dfe92bab))
+* use PAT with homebrew access for goreleaser ([3d171a0](https://github.com/bishalr0y/pman/commit/3d171a0305c224dc67c3c120fbb5d766bb691b34))
+* widen STARTED AT column and table layout ([f63772f](https://github.com/bishalr0y/pman/commit/f63772f88e07363fc914d24a9a3c4ba7cdf7b6cb))
+
 ## [6.3.0](https://github.com/bishalr0y/pman/compare/v6.2.0...v6.3.0) (2026-11-16)
 
 
