@@ -9,7 +9,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Version is the source-tree version. GoReleaser overrides it via ldflags on tagged builds.
+// Version is bumped by hand in this file. Tagged release binaries get the
+// git tag at compile time; this file is not rewritten by the release job.
 const Version = "6.4.0"
 
 // versionCmd represents the version command
