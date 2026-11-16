@@ -9,8 +9,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Version is bumped by Release Please on release PRs; GoReleaser overrides via ldflags on tagged builds.
-const Version = "6.4.0" // x-release-please-version
+// Version is the source-tree version. GoReleaser overrides it via ldflags on tagged builds.
+const Version = "6.4.0"
 
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{

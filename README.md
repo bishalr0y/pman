@@ -133,6 +133,17 @@ Color keys control specific UI elements — change any hex value to customize th
 - Go 1.26 or later (to build from source)
 - macOS or Linux
 
+## Releasing
+
+Goreleaser publishes GitHub assets and Homebrew when a GitHub release is created.
+
+```bash
+# 1. bump const Version in cmd/version.go and add a CHANGELOG.md section
+# 2. commit and push to main
+# 3. tag and publish:
+gh release create vX.Y.Z --title "vX.Y.Z" --notes "..." --target main
+```
+
 ## Regenerating the README screenshot
 
 ```bash
