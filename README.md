@@ -7,25 +7,27 @@
 A terminal-based process manager with a beautiful TUI for viewing and managing listening network processes.
 
 ![platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-blue)
-![Go](https://img.shields.io/badge/Go-1.25+-00ADD8)
+![Go](https://img.shields.io/badge/Go-1.26+-00ADD8)
 
 ## Preview
+
+TCP listeners are shown by default (press `u` in the TUI to include UDP). Each row is one listen socket with **PORT**, **BIND**, and **PID**.
 
 ![pman screenshot](assets/screenshot.png)
 
 ## Features
 
 ### TUI Features
-- View all processes listening on network ports
-- Display PORT, bind address, PID, Process Name, Protocol, Memory, Username, and Started At
-- Human-readable memory format (KB, MB, GB)
-- Auto-refresh every 2 seconds
-- Manual refresh with `r`
+- One row per listen socket (same PID can appear on multiple ports or binds)
+- Columns: PORT, BIND, PID, process name, protocol, memory, user, started at
+- TCP-only view by default; `u` toggles UDP listeners
+- Terminal-sized table (resizes with your window)
+- Human-readable memory (KB, MB, GB)
+- Auto-refresh every 2 seconds; manual refresh with `r`
 - Vim-style navigation (`j`/`k` or arrow keys)
-- Customizable color theme via `~/.config/pman/config.yaml`
-- Kill processes from the TUI with confirmation (SIGTERM by default)
-- TCP listeners only by default; press `u` to toggle UDP rows
-- Hide noisy process names via config (`display.hide_process_names`)
+- Confirm before kill (`Enter` then `y`); SIGTERM by default
+- Theme colors via `~/.config/pman/config.yaml`
+- Hide process names in the TUI via `display.hide_process_names` (JSON is always complete)
 
 ### CLI Commands
 - `pman` - Launch interactive TUI (default)
@@ -79,16 +81,19 @@ pman
 ### CLI Examples
 
 ```bash
-# Output processes as JSON
+# Full process list (all protocols); each object includes "address" and "port"
 pman json
 
-# Terminate a process by PID (SIGTERM)
+# Script-friendly: failures exit 1
+pman kill not-a-pid   # exit 1
+
+# Terminate by PID (SIGTERM)
 pman kill 1234
 
 # Force kill (SIGKILL)
 pman kill --force 1234
 
-# Terminate process on a specific port
+# Terminate listener on a port (first match)
 pman killport 8080
 ```
 
@@ -125,8 +130,15 @@ Color keys control specific UI elements — change any hex value to customize th
 
 ## Requirements
 
-- Go 1.25 or later
+- Go 1.26 or later (to build from source)
 - macOS or Linux
+
+## Regenerating the README screenshot
+
+```bash
+go build -o bin/pman .
+vhs scripts/screenshot.tape   # writes assets/screenshot.png
+```
 
 ## License
 

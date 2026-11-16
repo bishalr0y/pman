@@ -2,6 +2,7 @@ tmp
 .env
 .envrc
 bin/
+assets/screenshot.gif
 todo.md
 
 # Logs
