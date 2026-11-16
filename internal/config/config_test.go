@@ -87,3 +87,45 @@ func TestReadConfig_ExistingFile(t *testing.T) {
 		t.Errorf("expected version #00ff00, got %q", cfg.Colors.Version)
 	}
 }
+
+func TestReadConfig_DisplayHideProcessNames(t *testing.T) {
+	saved := once
+	once = new(sync.Once)
+	t.Cleanup(func() { once = saved })
+
+	tmpHome := t.TempDir()
+	t.Setenv("HOME", tmpHome)
+
+	configDir := filepath.Join(tmpHome, ".config/pman")
+	if err := os.MkdirAll(configDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	configContent := `display:
+  hide_process_names:
+    - cloudflared
+    - rapportd
+colors:
+  banner: "#8bd5ca"
+  version: "#7287fd"
+  help_key: "#a6e3a1"
+  help_desc: "#babbf1"
+  help_separator: "#8bd5ca"
+  header_fg: "#7287fd"
+  selected_bg: "#7287fd"
+  selected_fg: "#f9e2af"
+  border_fg: "#6c7086"
+`
+	if err := os.WriteFile(filepath.Join(configDir, "config.yaml"), []byte(configContent), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	cfg, err := ReadConfig()
+	if err != nil {
+		t.Fatalf("ReadConfig() returned error: %v", err)
+	}
+
+	if len(cfg.Display.HideProcessNames) != 2 {
+		t.Fatalf("hide_process_names = %v, want 2 entries", cfg.Display.HideProcessNames)
+	}
+}
