@@ -13,7 +13,7 @@ A terminal-based process manager with a beautiful TUI for viewing and managing l
 
 TCP listeners are shown by default (press `u` in the TUI to include UDP). Each row is one listen socket with **PORT**, **BIND**, and **PID**.
 
-![pman screenshot](assets/screenshot.png)
+![pman screenshot](assets/screenshot.png?v=6)
 
 ## Features
 
@@ -136,7 +136,7 @@ Color keys control specific UI elements — change any hex value to customize th
 ## Regenerating the README screenshot
 
 ```bash
-go build -o bin/pman .
+go build -ldflags "-X github.com/bishalr0y/pman/cmd.Version=6.0.0" -o bin/pman .
 vhs scripts/screenshot.tape   # writes assets/screenshot.png
 ```
 
