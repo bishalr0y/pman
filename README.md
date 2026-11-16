@@ -73,7 +73,7 @@ pman
 |-----|--------|
 | `↑` / `k` | Move up |
 | `↓` / `j` | Move down |
-| `Enter` | Confirm kill for selected process (`y`/`Enter` to proceed, `n`/`Esc` to cancel) |
+| `Enter` | Confirm kill in a floating dialog (process name, PID, and all listen ports, including UDP hidden by the default filter) |
 | `r` | Refresh process list |
 | `u` | Toggle UDP listeners (TCP-only by default) |
 | `q` / `Esc` / `Ctrl+C` | Quit |

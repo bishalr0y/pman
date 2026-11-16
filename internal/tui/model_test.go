@@ -2,10 +2,12 @@ package tui
 
 import (
 	"errors"
+	"strings"
 	"testing"
 
 	"charm.land/bubbles/v2/table"
 	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 	"github.com/bishalr0y/pman/internal/process"
 )
 
@@ -56,14 +58,47 @@ func seedTableRow(m *model) {
 func TestUpdate_enter_startsKillConfirm(t *testing.T) {
 	m := NewModel(testTable(), nil, "test", Colors{}, nil)
 	seedTableRow(m)
+	m.processes = []process.Process{
+		{Port: 8080, ProcessID: 42, ProcessName: "test", Protocol: "tcp"},
+	}
 
 	updated, cmd := m.Update(tea.KeyPressMsg{Code: tea.KeyEnter})
 	got := updated.(model)
 	if got.pendingKillPID != 42 {
 		t.Fatalf("pendingKillPID = %d, want 42", got.pendingKillPID)
 	}
-	if got.status != "Kill PID 42? (y/n)" {
-		t.Fatalf("status = %q, want confirm prompt", got.status)
+	view := got.View().Content
+	if !strings.Contains(view, "Confirm kill") || !strings.Contains(view, "8080") {
+		t.Fatalf("expected floating confirm dialog, got:\n%s", view)
+	}
+	if cmd != nil {
+		t.Fatal("expected no cmd while awaiting confirmation")
+	}
+}
+
+func TestUpdate_enter_listsAllSocketsIncludingHiddenUDP(t *testing.T) {
+	m := NewModel(testTable(), nil, "test", Colors{}, nil)
+	m.processes = []process.Process{
+		{Port: 3000, ProcessID: 9, ProcessName: "node", Protocol: "tcp", Address: "127.0.0.1", Memory: "1", Username: "u", StartedAt: "now"},
+		{Port: 3001, ProcessID: 9, ProcessName: "node", Protocol: "tcp", Address: "127.0.0.1", Memory: "1", Username: "u", StartedAt: "now"},
+		{Port: 5353, ProcessID: 9, ProcessName: "node", Protocol: "udp", Address: "0.0.0.0", Memory: "1", Username: "u", StartedAt: "now"},
+	}
+	m.applyFilterToTable()
+
+	updated, cmd := m.Update(tea.KeyPressMsg{Code: tea.KeyEnter})
+	got := updated.(model)
+	if got.pendingKillPID != 9 {
+		t.Fatalf("pendingKillPID = %d, want 9", got.pendingKillPID)
+	}
+	view := got.View().Content
+	if !strings.Contains(view, "Confirm kill") {
+		t.Fatalf("expected floating confirm, got:\n%s", view)
+	}
+	if !strings.Contains(view, "3000") || !strings.Contains(view, "3001") {
+		t.Fatalf("expected both tcp ports in dialog, got:\n%s", view)
+	}
+	if !strings.Contains(view, "5353") || !strings.Contains(view, "hidden") {
+		t.Fatalf("expected hidden udp socket in dialog, got:\n%s", view)
 	}
 	if cmd != nil {
 		t.Fatal("expected no cmd while awaiting confirmation")
@@ -139,5 +174,32 @@ func TestUpdate_emptySelection_noPanic(t *testing.T) {
 	got := updated.(model)
 	if got.pendingKillPID != 0 || cmd != nil {
 		t.Fatalf("expected no confirm on empty table, pending=%d cmd=%v", got.pendingKillPID, cmd)
+	}
+}
+
+func TestKillTarget_dialog_evenBoxWidth(t *testing.T) {
+	target := killTarget{
+		name: "node",
+		pid:  9,
+		sockets: []killSocket{
+			{proto: "tcp", port: 3000},
+			{proto: "tcp", port: 3001},
+			{proto: "udp", port: 5353, hidden: true},
+		},
+	}
+	got := target.dialog(Colors{
+		Banner: "#8bd5ca", Version: "#7287fd", HelpKey: "#a6e3a1",
+		HelpDesc: "#babbf1", HeaderFg: "#7287fd", SelectedBg: "#7287fd",
+		SelectedFg: "#f9e2af", BorderFg: "#6c7086",
+	})
+	lines := strings.Split(got, "\n")
+	if len(lines) < 3 {
+		t.Fatalf("dialog too short:\n%s", got)
+	}
+	width := lipgloss.Width(lines[0])
+	for i, line := range lines {
+		if w := lipgloss.Width(line); w != width {
+			t.Fatalf("line %d width %d, want %d\n%s", i, w, width, got)
+		}
 	}
 }
