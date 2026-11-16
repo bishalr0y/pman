@@ -32,8 +32,7 @@ func versionStyle(c Colors) lipgloss.Style {
 		Italic(true)
 }
 
-var banner = `
- ██▓███   ███▄ ▄███▓ ▄▄▄       ███▄    █ 
+var banner = ` ██▓███   ███▄ ▄███▓ ▄▄▄       ███▄    █ 
 ▓██░  ██▒▓██▒▀█▀ ██▒▒████▄     ██ ▀█   █ 
 ▓██░ ██▓▒▓██    ▓██░▒██  ▀█▄  ▓██  ▀█ ██▒
 ▒██▄█▓▒ ▒▒██    ▒██ ░██▄▄▄▄██ ▓██▒  ▐▌██▒
@@ -41,8 +40,7 @@ var banner = `
 ▒▓▒░ ░  ░░ ▒░   ░  ░ ▒▒   ▓▒█░░ ▒░   ▒ ▒ 
 ░▒ ░     ░  ░      ░  ▒   ▒▒ ░░ ░░   ░ ▒░
 ░░       ░      ░     ░   ▒      ░   ░ ░ 
-                ░         ░  ░         ░ 
-`
+                ░         ░  ░         ░`
 
 type keyMap struct {
 	Up        key.Binding
@@ -299,5 +297,7 @@ func (m model) View() tea.View {
 		helpView,
 	)
 
-	return tea.NewView(content)
+	v := tea.NewView(content)
+	v.AltScreen = true
+	return v
 }

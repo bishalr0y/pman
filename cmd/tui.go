@@ -8,6 +8,7 @@ import (
 	"charm.land/lipgloss/v2"
 	"github.com/bishalr0y/pman/internal/config"
 	"github.com/bishalr0y/pman/internal/tui"
+	"github.com/charmbracelet/colorprofile"
 )
 
 func tuiInit() error {
@@ -61,7 +62,7 @@ func tuiInit() error {
 	t.SetStyles(s)
 
 	m := tui.NewModel(t, nil, Version, colors, cfg.Display.HideProcessNames)
-	if _, err := tea.NewProgram(m).Run(); err != nil {
+	if _, err := tea.NewProgram(m, tea.WithColorProfile(colorprofile.TrueColor)).Run(); err != nil {
 		return fmt.Errorf("error running program: %w", err)
 	}
 	return nil

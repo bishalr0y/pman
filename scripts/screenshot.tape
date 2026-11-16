@@ -1,23 +1,26 @@
 # From repo root:
-#   go build -ldflags "-X github.com/bishalr0y/pman/cmd.Version=6.0.0" -o bin/pman .
+#   go build -o bin/pman .
 #   vhs scripts/screenshot.tape
 Output assets/screenshot.gif
 Set Shell "bash"
-Set FontSize 18
-Set Width 1920
-Set Height 1080
+Set FontFamily "Berkeley Mono"
+Set FontSize 16
+Set Columns 120
+Set Rows 34
 Set Theme "Catppuccin Mocha"
 Set WindowBar Colorful
-Set TypingSpeed 50ms
+Set Padding 20
+Set TypingSpeed 1ms
 
+Env TERM "xterm-256color"
+Env COLORTERM "truecolor"
+
+Hide
 Type "./bin/pman"
 Enter
 Sleep 5s
-# Toggle UDP twice so the status line shows "Showing TCP only"
-Type "u"
-Sleep 400ms
-Type "u"
-Sleep 400ms
+Show
+Sleep 2s
 Screenshot assets/screenshot.png
 Type "q"
 Enter
