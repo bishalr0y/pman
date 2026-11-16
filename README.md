@@ -24,6 +24,8 @@ A terminal-based process manager with a beautiful TUI for viewing and managing l
 - Vim-style navigation (`j`/`k` or arrow keys)
 - Customizable color theme via `~/.config/pman/config.yaml`
 - Kill processes from the TUI with confirmation (SIGTERM by default)
+- TCP listeners only by default; press `u` to toggle UDP rows
+- Hide noisy process names via config (`display.hide_process_names`)
 
 ### CLI Commands
 - `pman` - Launch interactive TUI (default)
@@ -71,6 +73,7 @@ pman
 | `↓` / `j` | Move down |
 | `Enter` | Confirm kill for selected process (`y`/`Enter` to proceed, `n`/`Esc` to cancel) |
 | `r` | Refresh process list |
+| `u` | Toggle UDP listeners (TCP-only by default) |
 | `q` / `Esc` / `Ctrl+C` | Quit |
 
 ### CLI Examples
@@ -94,6 +97,9 @@ pman killport 8080
 pman reads config from `~/.config/pman/config.yaml`. On first run, it auto-creates the file with defaults:
 
 ```yaml
+display:
+  hide_process_names: []
+
 colors:
   banner: "#8bd5ca"
   version: "#7287fd"
@@ -106,7 +112,16 @@ colors:
   border_fg: "#6c7086"
 ```
 
-Each key controls a specific UI element — change any hex value to customize the theme.
+`display.hide_process_names` hides processes from the **TUI** by exact name (case-insensitive). `pman json` always lists everything. Example:
+
+```yaml
+display:
+  hide_process_names:
+    - cloudflared
+    - rapportd
+```
+
+Color keys control specific UI elements — change any hex value to customize the theme.
 
 ## Requirements
 

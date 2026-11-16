@@ -3,6 +3,7 @@ package tui
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"charm.land/bubbles/v2/help"
@@ -44,23 +45,24 @@ var banner = `
 `
 
 type keyMap struct {
-	Up      key.Binding
-	Down    key.Binding
-	Kill    key.Binding
-	Refresh key.Binding
-	Quit    key.Binding
+	Up        key.Binding
+	Down      key.Binding
+	Kill      key.Binding
+	Refresh   key.Binding
+	ToggleUDP key.Binding
+	Quit      key.Binding
 }
 
 // ShortHelp returns keybindings to be shown in the mini help view
 func (k keyMap) ShortHelp() []key.Binding {
-	return []key.Binding{k.Up, k.Down, k.Quit, k.Kill, k.Refresh}
+	return []key.Binding{k.Up, k.Down, k.ToggleUDP, k.Kill, k.Refresh, k.Quit}
 }
 
 // FullHelp returns keybindings for the expaned help view
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.Up, k.Down, k.Kill}, // first column
-		{k.Refresh, k.Quit},    // second column
+		{k.Up, k.Down, k.Kill},
+		{k.Refresh, k.ToggleUDP, k.Quit},
 	}
 }
 
@@ -80,6 +82,10 @@ var keys = keyMap{
 	Refresh: key.NewBinding(
 		key.WithKeys("r"),
 		key.WithHelp("r", "refresh"),
+	),
+	ToggleUDP: key.NewBinding(
+		key.WithKeys("u"),
+		key.WithHelp("u", "toggle udp"),
 	),
 	Quit: key.NewBinding(
 		key.WithKeys("q", "esc", "ctrl+c"),
@@ -106,14 +112,16 @@ func tableSizeForWindow(width, height int) (w, h int) {
 }
 
 type model struct {
-	table          table.Model
-	processes      []process.Process
-	status         string
-	pendingKillPID int32
-	keys           keyMap
-	help           help.Model
-	version        string
-	colors         Colors
+	table            table.Model
+	processes        []process.Process
+	status           string
+	pendingKillPID   int32
+	showUDP          bool
+	hideProcessNames []string
+	keys             keyMap
+	help             help.Model
+	version          string
+	colors           Colors
 }
 
 func statusStyle(c Colors) lipgloss.Style {
@@ -122,7 +130,7 @@ func statusStyle(c Colors) lipgloss.Style {
 		Bold(true)
 }
 
-func NewModel(table table.Model, processes []process.Process, version string, colors Colors) *model {
+func NewModel(table table.Model, processes []process.Process, version string, colors Colors, hideProcessNames []string) *model {
 	h := help.New()
 
 	h.Styles.ShortKey = lipgloss.NewStyle().
@@ -137,13 +145,39 @@ func NewModel(table table.Model, processes []process.Process, version string, co
 		Foreground(lipgloss.Color(colors.HelpSeparator))
 
 	return &model{
-		table:     table,
-		processes: processes,
-		keys:      keys,
-		help:      h,
-		version:   version,
-		colors:    colors,
+		table:            table,
+		processes:        processes,
+		hideProcessNames: hideProcessNames,
+		keys:             keys,
+		help:             h,
+		version:          version,
+		colors:           colors,
 	}
+}
+
+func (m *model) displayFilter() process.Filter {
+	return process.Filter{
+		TCPOnly:          !m.showUDP,
+		HideProcessNames: m.hideProcessNames,
+	}
+}
+
+func (m *model) applyFilterToTable() {
+	visible := m.displayFilter().Apply(m.processes)
+	rows := make([]table.Row, len(visible))
+	for i, p := range visible {
+		rows[i] = table.Row{
+			strconv.FormatUint(uint64(p.Port), 10),
+			p.Address,
+			strconv.FormatInt(int64(p.ProcessID), 10),
+			p.ProcessName,
+			p.Protocol,
+			p.Memory,
+			p.Username,
+			p.StartedAt,
+		}
+	}
+	m.table.SetRows(rows)
 }
 
 func (m model) Init() tea.Cmd {
@@ -194,6 +228,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "r":
 			return m, fetchProcesses()
+		case "u":
+			m.showUDP = !m.showUDP
+			m.applyFilterToTable()
+			if m.showUDP {
+				m.status = "Showing TCP and UDP"
+			} else {
+				m.status = "Showing TCP only"
+			}
+			return m, nil
 		case "enter":
 			selected := m.table.SelectedRow()
 			if len(selected) < 3 {
@@ -210,23 +253,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 	case []process.Process:
-		m.status = ""
-		processes := msg
-		m.processes = processes
-		rows := make([]table.Row, len(processes))
-		for i, p := range processes {
-			rows[i] = table.Row{
-				strconv.FormatUint(uint64(p.Port), 10),
-				p.Address,
-				strconv.FormatInt(int64(p.ProcessID), 10),
-				p.ProcessName,
-				p.Protocol,
-				p.Memory,
-				p.Username,
-				p.StartedAt,
-			}
+		m.processes = msg
+		if m.pendingKillPID == 0 && strings.HasPrefix(m.status, "Error listing processes:") {
+			m.status = ""
 		}
-		m.table.SetRows(rows)
+		m.applyFilterToTable()
 
 	case time.Time:
 		return m, tea.Batch(fetchProcesses(), autorefresh())

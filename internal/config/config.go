@@ -32,8 +32,13 @@ type Colors struct {
 	BorderFg      string `yaml:"border_fg"`
 }
 
+type Display struct {
+	HideProcessNames []string `yaml:"hide_process_names"`
+}
+
 type Config struct {
-	Colors Colors `yaml:"colors"`
+	Colors  Colors  `yaml:"colors"`
+	Display Display `yaml:"display"`
 }
 
 // defaultConfig is parsed once at package init.

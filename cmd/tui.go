@@ -60,7 +60,7 @@ func tuiInit() error {
 		Bold(false)
 	t.SetStyles(s)
 
-	m := tui.NewModel(t, nil, Version, colors)
+	m := tui.NewModel(t, nil, Version, colors, cfg.Display.HideProcessNames)
 	if _, err := tea.NewProgram(m).Run(); err != nil {
 		return fmt.Errorf("error running program: %w", err)
 	}
